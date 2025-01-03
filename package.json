@@ -2,12 +2,14 @@
   "name": "picture-compression-tool",
   "private": true,
   "version": "0.0.1",
+  "description": "A tool for compressing pictures",
+  "author": "Your Name",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "electron:dev": "vite",
-    "electron:build": "vue-tsc && vite build --config electron.vite.config.ts && electron-builder",
+    "build": "vite build",
+    "electron:dev": "vite build --watch & electron .",
+    "electron:build": "vite build && electron-builder",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -30,8 +32,40 @@
     "sass": "^1.69.5",
     "typescript": "^5.3.3",
     "vite": "^4.5.1",
-    "vite-plugin-electron": "^0.11.2",
+    "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.5",
-    "vue-tsc": "^1.8.22"
+    "vue-tsc": "^1.8.5"
+  },
+  "config": {
+    "electron_mirror": "https://npmmirror.com/mirrors/electron/",
+    "electron_builder_binaries_mirror": "https://npmmirror.com/mirrors/electron-builder-binaries/"
+  },
+  "build": {
+    "appId": "com.picture.compressor",
+    "productName": "Picture Compressor",
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "asar": false,
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
   }
 }

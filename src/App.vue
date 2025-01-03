@@ -4,10 +4,12 @@
       <n-layout class="app-container">
         <n-layout-header class="titlebar">
           <div class="toolbar">
-            <div class="traffic-lights" v-if="isElectron">
-              <div class="traffic-light close"></div>
-              <div class="traffic-light minimize"></div>
-              <div class="traffic-light zoom"></div>
+            <div v-if="isElectron" class="traffic-lights">
+              <div class="traffic-light-wrapper">
+                <div class="traffic-light close"></div>
+                <div class="traffic-light minimize"></div>
+                <div class="traffic-light zoom"></div>
+              </div>
             </div>
             <n-switch v-model:value="isDarkMode">
               <template #checked>🌙</template>
@@ -53,19 +55,30 @@ const isElectron = computed(() => window?.electron !== undefined)
 }
 
 .traffic-lights {
+  -webkit-app-region: no-drag;
+}
+
+.traffic-light-wrapper {
   display: flex;
   gap: 8px;
-  -webkit-app-region: no-drag;
 }
 
 .traffic-light {
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
   
   &.close { background: #ff5f57; }
   &.minimize { background: #febc2e; }
   &.zoom { background: #28c840; }
+
+  &:hover {
+    &.close { background: #ff4444; }
+    &.minimize { background: #ffbc2c; }
+    &.zoom { background: #00c73e; }
+  }
 }
 
 .main-content {

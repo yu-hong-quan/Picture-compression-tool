@@ -2,4 +2,7 @@ node_modules
 dist
 dist-electron
 .DS_Store
+release
+build
+dist_electron
 
