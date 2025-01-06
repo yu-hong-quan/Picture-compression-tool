@@ -1,4 +1,5 @@
 <template>
+  <Loading :visible="loading" />
   <n-message-provider>
     <n-config-provider :theme="theme">
       <n-layout class="app-container">
@@ -6,9 +7,9 @@
           <div class="toolbar">
             <div v-if="isElectron" class="traffic-lights">
               <div class="traffic-light-wrapper">
-                <div class="traffic-light close"></div>
-                <div class="traffic-light minimize"></div>
-                <div class="traffic-light zoom"></div>
+                <div class="traffic-light close" @click="handleClose"></div>
+                <div class="traffic-light minimize" @click="handleMinimize"></div>
+                <div class="traffic-light zoom" @click="handleMaximize"></div>
               </div>
             </div>
             <n-switch v-model:value="isDarkMode">
@@ -26,14 +27,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { darkTheme, lightTheme } from 'naive-ui'
 import { useOsTheme } from 'naive-ui'
+import Loading from './components/Loading.vue'
 
 const osThemeRef = useOsTheme()
 const isDarkMode = ref(osThemeRef.value === 'light')
 const theme = computed(() => isDarkMode.value ? darkTheme : lightTheme)
 const isElectron = computed(() => window?.electron !== undefined)
+
+const loading = ref(true)
+
+onMounted(async () => {
+  // 等待资源加载完成
+  await Promise.all([
+    // 添加需要等待的资源加载
+    new Promise(resolve => setTimeout(resolve, 1000)) // 至少显示1秒
+  ])
+  loading.value = false
+})
+
+// 添加窗口控制函数
+const handleClose = () => {
+  window.electron?.windowClose()
+}
+
+const handleMinimize = () => {
+  window.electron?.windowMinimize()
+}
+
+const handleMaximize = () => {
+  window.electron?.windowMaximize()
+}
 </script>
 
 <style lang="scss">

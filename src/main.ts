@@ -17,7 +17,8 @@ import {
   NSwitch,
   NUpload,
   NUploadDragger,
-  NMessageProvider
+  NMessageProvider,
+  NSpin
 } from 'naive-ui'
 import './style.css'
 
@@ -36,7 +37,8 @@ const naive = create({
     NSwitch,
     NUpload,
     NUploadDragger,
-    NMessageProvider
+    NMessageProvider,
+    NSpin
   ]
 })
 

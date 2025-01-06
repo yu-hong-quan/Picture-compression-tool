@@ -2,14 +2,14 @@
   "name": "picture-compression-tool",
   "private": true,
   "version": "0.0.1",
-  "description": "A tool for compressing pictures",
+  "description": "图片压缩工具",
   "author": "Your Name",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "electron:dev": "vite build --watch & electron .",
-    "electron:build": "vite build && electron-builder",
+    "electron:dev": "vite build -w & vite build -w -c electron.vite.config.ts & electron .",
+    "electron:build": "electron-builder",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -42,7 +42,7 @@
   },
   "build": {
     "appId": "com.picture.compressor",
-    "productName": "Picture Compressor",
+    "productName": "图片压缩工具",
     "files": [
       "dist/**/*",
       "dist-electron/**/*"

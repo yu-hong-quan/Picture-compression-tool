@@ -201,18 +201,21 @@ const compressionRecords = ref<Record<string, CompressionRecord>>({})
 const handleChange = async (data: { file: UploadFileInfo, event?: Event }) => {
   const { file } = data
   
-  if (file.status === 'removed' || file.status === 'finished') {
+  // 检查文件类型
+  if (file.file && file.file.type && !file.file.type.startsWith('image/')) {
+    message.error('只能上传图片文件！')
+    // 清空上传列表
+    fileList.value = fileList.value.filter(f => f.id !== file.id)
     return
   }
 
-  if (!file.file?.type.startsWith('image/')) {
-    message.error('只能上传图片文件')
+  if (file.status === 'removed' || file.status === 'finished') {
     return
   }
 
   // 初始化压缩记录
   compressionRecords.value[file.id] = {
-    originalSize: file.file.size,
+    originalSize: file.file?.size || 0,
     compressedSize: 0,
     ratio: 0,
     status: 'uploading',
@@ -220,12 +223,12 @@ const handleChange = async (data: { file: UploadFileInfo, event?: Event }) => {
     timestamp: Date.now()
   }
 
-  const url = URL.createObjectURL(file.file)
+  const url = URL.createObjectURL(file.file as Blob)
   previewUrls.value[file.id] = url
   file.status = 'uploading'
   file.percentage = 0
 
-  new Compressor(file.file, {
+  new Compressor(file.file as Blob, {
     quality: quality.value,
     maxWidth: 2000,
     maxHeight: 2000,
