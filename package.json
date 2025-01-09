@@ -7,10 +7,12 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build && electron-builder",
+    "clean": "node scripts/clean.js",
+    "type-check": "vue-tsc --noEmit",
+    "build": "npm run clean && vite build && electron-builder",
     "electron:dev": "vite dev & electron .",
     "generate-icons": "node scripts/generate-icons.js",
-    "electron:build": "npm run build",
+    "electron:build": "npm run generate-icons && npm run build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -37,7 +39,7 @@
     "vite": "^4.5.1",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.5",
-    "vue-tsc": "^1.8.5"
+    "vue-tsc": "^1.8.22"
   },
   "config": {
     "electron_mirror": "https://npmmirror.com/mirrors/electron/",
@@ -74,12 +76,24 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "图片压缩工具-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true
+      "createDesktopShortcut": true,
+      "shortcutName": "图片压缩工具",
+      "uninstallDisplayName": "图片压缩工具",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "deleteAppDataOnUninstall": true,
+      "displayLanguageSelector": false,
+      "language": 2052,
+      "perMachine": false,
+      "runAfterFinish": true
     }
   }
 }

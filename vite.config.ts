@@ -34,6 +34,17 @@ export default defineConfig({
     }),
     renderer()
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'naive-ui': ['naive-ui'],
+          'vue-vendor': ['vue', 'vue-router', 'pinia']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')
