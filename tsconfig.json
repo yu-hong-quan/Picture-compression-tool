@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
@@ -26,19 +26,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./electron"
-    ]
+    }
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "electron/**/*.ts",
-    "electron/**/*.d.ts"
+    "electron/**/*.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 } 

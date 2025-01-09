@@ -12,6 +12,7 @@ export default defineConfig({
       vite: {
         build: {
           outDir: 'dist-electron',
+          minify: 'esbuild',
           rollupOptions: {
             external: ['electron']
           }
@@ -26,6 +27,7 @@ export default defineConfig({
       vite: {
         build: {
           outDir: 'dist-electron',
+          minify: 'esbuild',
           rollupOptions: {
             external: ['electron']
           }
@@ -43,11 +45,21 @@ export default defineConfig({
         }
       }
     },
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 1000,
+    minify: 'esbuild',
+    target: 'esnext',
+    sourcemap: false,
+    outDir: 'dist',
+    emptyOutDir: true,
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')
     }
+  },
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'pinia', 'naive-ui']
   }
 }) 

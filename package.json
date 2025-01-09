@@ -32,9 +32,11 @@
     "@vitejs/plugin-vue": "^4.6.2",
     "electron": "^25.9.8",
     "electron-builder": "^24.9.1",
+    "esbuild": "^0.19.10",
+    "png-to-ico": "^2.1.8",
     "sass": "^1.69.5",
-    "sharp": "^0.33.5",
-    "svg2png-converter": "^1.0.2",
+    "sharp": "^0.33.2",
+    "terser": "^5.26.0",
     "typescript": "^5.3.3",
     "vite": "^4.5.1",
     "vite-plugin-electron": "^0.29.0",
@@ -56,10 +58,7 @@
     "extraResources": [
       {
         "from": "build",
-        "to": "build",
-        "filter": [
-          "icon*.png"
-        ]
+        "to": "build"
       }
     ],
     "asar": true,

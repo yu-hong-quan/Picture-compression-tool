@@ -6,6 +6,7 @@ const dirsToClean = [
   'dist',
   'dist-electron',
   'release'
+  // 移除 'build' 目录，因为它包含了必要的图标源文件
 ]
 
 /**

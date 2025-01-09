@@ -101,6 +101,13 @@ function registerIpcHandlers() {
   // ... 其他 IPC 处理器
 }
 
+function getAssetPath(...paths: string[]) {
+  if (isDev) {
+    return join(__dirname, '..', ...paths)
+  }
+  return join(process.resourcesPath, ...paths)
+}
+
 async function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -108,11 +115,13 @@ async function createWindow() {
     titleBarStyle: 'hidden',
     frame: false,
     title: '图片压缩工具',
-    icon: join(__dirname, '../build/icon.png'),
+    icon: getAssetPath('build', 'icon.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-      preload: join(__dirname, 'preload.js')
+      preload: join(__dirname, 'preload.js'),
+      webSecurity: true,
+      sandbox: false
     }
   })
 
@@ -189,15 +198,21 @@ async function createWindow() {
     mainWindow?.show()
   })
 
-  // 预加载资源
+  // 优化加载逻辑
   if (isDev) {
     mainWindow?.webContents.session.clearCache()
-    setTimeout(() => {
-      mainWindow?.loadURL('http://localhost:5173')
-      mainWindow?.webContents.openDevTools()
-    }, 500) // 减少等待时间
+    await mainWindow?.loadURL('http://localhost:5173')
+    mainWindow?.webContents.openDevTools()
   } else {
-    mainWindow?.loadFile(join(__dirname, '../dist/index.html'))
+    // 生产环境加载
+    try {
+      const indexPath = join(__dirname, '../dist/index.html')
+      await mainWindow?.loadFile(indexPath)
+    } catch (error) {
+      console.error('加载主窗口失败:', error)
+      dialog.showErrorBox('错误', '应用加载失败，请重新安装')
+      app.quit()
+    }
   }
 
   // 窗口最小化时隐藏到托盘
@@ -237,6 +252,21 @@ async function createWindow() {
       event.preventDefault()
       mainWindow?.hide()
     }
+  })
+
+  // 添加错误处理
+  mainWindow?.webContents.on('crashed', () => {
+    dialog.showErrorBox('错误', '应用崩溃，请重启')
+    app.relaunch()
+    app.quit()
+  })
+
+  // 处理未捕获的异常
+  process.on('uncaughtException', (error) => {
+    console.error('未捕获的异常:', error)
+    dialog.showErrorBox('错误', '发生未知错误，请重启应用')
+    app.relaunch()
+    app.quit()
   })
 }
 
