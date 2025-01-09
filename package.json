@@ -3,13 +3,14 @@
   "private": true,
   "version": "0.0.1",
   "description": "图片压缩工具",
-  "author": "Your Name",
+  "author": "余山郡",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "electron:dev": "vite build -w & vite build -w -c electron.vite.config.ts & electron .",
-    "electron:build": "electron-builder",
+    "build": "vue-tsc && vite build && electron-builder",
+    "electron:dev": "vite dev & electron .",
+    "generate-icons": "node scripts/generate-icons.js",
+    "electron:build": "npm run build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -30,6 +31,8 @@
     "electron": "^25.9.8",
     "electron-builder": "^24.9.1",
     "sass": "^1.69.5",
+    "sharp": "^0.33.5",
+    "svg2png-converter": "^1.0.2",
     "typescript": "^5.3.3",
     "vite": "^4.5.1",
     "vite-plugin-electron": "^0.29.0",
@@ -43,15 +46,26 @@
   "build": {
     "appId": "com.picture.compressor",
     "productName": "图片压缩工具",
+    "icon": "build/icon.png",
     "files": [
       "dist/**/*",
       "dist-electron/**/*"
     ],
-    "asar": false,
+    "extraResources": [
+      {
+        "from": "build",
+        "to": "build",
+        "filter": [
+          "icon*.png"
+        ]
+      }
+    ],
+    "asar": true,
     "directories": {
       "output": "release",
       "buildResources": "build"
     },
+    "compression": "maximum",
     "win": {
       "target": [
         {

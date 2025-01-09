@@ -52,6 +52,9 @@
     @update:file-list="handleUpdateFileList"
     :file-list="fileList"
     :show-file-list="true"
+    accept="image/jpeg,image/png,image/jpg"
+    :before-upload="beforeUpload"
+    class="custom-upload"
     >
       <n-upload-dragger class="upload-dragger glass-effect">
         <div class="upload-area">
@@ -59,9 +62,29 @@
             <image-outline />
           </n-icon>
           <p class="upload-text">点击或拖拽图片到此处</p>
-          <p class="upload-tip">支持jpg、png格式，单次最多10张</p>
+          <p class="upload-tip">仅支持 JPG、PNG 格式，单次最多10张</p>
         </div>
       </n-upload-dragger>
+
+      <template #file="{ file }">
+        <div class="n-upload-file">
+          <div class="n-upload-file-info">
+                <div class="file-info">
+                  <span class="n-upload-file-info__name">{{ file.name }}</span>
+                  <span class="n-upload-file-info__size">
+                    {{ formatFileSize(file.file?.size || 0) }}
+                  </span>
+                </div>
+                <div class="n-upload-file-info__action">
+              <n-button quaternary circle @click.stop="handleDeleteImage(file)">
+                    <template #icon>
+                      <n-icon><close-outline /></n-icon>
+                    </template>
+                  </n-button>
+            </div>
+          </div>
+        </div>
+      </template>
     </n-upload>
 
     <transition-group name="image-list" tag="div" class="image-grid">
@@ -152,7 +175,7 @@
 
 <script setup lang="ts">
 import { ref, computed,onBeforeUnmount } from 'vue'
-import { ImageOutline, SaveOutline, TrashOutline, DownloadOutline, CloseOutline } from '@vicons/ionicons5'
+import { ImageOutline, SaveOutline, TrashOutline, DownloadOutline, CloseOutline, CheckmarkCircleOutline } from '@vicons/ionicons5'
 import type { UploadFileInfo } from 'naive-ui'
 import { useMessage } from 'naive-ui'
 import Compressor from 'compressorjs'
@@ -198,17 +221,29 @@ interface CompressionRecord {
 // 添加压缩记录存储
 const compressionRecords = ref<Record<string, CompressionRecord>>({})
 
+// 添加文件类型检查函数
+const beforeUpload = (file: File) => {
+  const isImage = file.type === 'image/jpeg' || 
+                  file.type === 'image/png' || 
+                  file.type === 'image/jpg'
+  
+  if (!isImage) {
+    message.error('只能上传 JPG 或 PNG 格式的图片！')
+    return false
+  }
+  
+  const isLt10M = file.size / 1024 / 1024 < 10
+  if (!isLt10M) {
+    message.error('图片大小不能超过 10MB！')
+    return false
+  }
+  
+  return true
+}
+
 const handleChange = async (data: { file: UploadFileInfo, event?: Event }) => {
   const { file } = data
   
-  // 检查文件类型
-  if (file.file && file.file.type && !file.file.type.startsWith('image/')) {
-    message.error('只能上传图片文件！')
-    // 清空上传列表
-    fileList.value = fileList.value.filter(f => f.id !== file.id)
-    return
-  }
-
   if (file.status === 'removed' || file.status === 'finished') {
     return
   }
@@ -714,6 +749,100 @@ onBeforeUnmount(() => {
 
     tr:hover td {
       background-color: var(--n-table-color-hover);
+    }
+  }
+}
+
+// 自定义文件列表样式
+.custom-upload {
+  :deep(.n-upload-file-list) {
+    margin-top: 16px;
+    
+    .n-upload-file {
+      background: var(--n-card-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      border: 1px solid var(--n-border-color);
+      margin-bottom: 8px;
+      
+      &:hover {
+        background: var(--n-card-color-hover);
+        transform: translateX(4px);
+      }
+      
+      .n-upload-file-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        
+        .file-info {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .n-upload-file-info__name {
+            font-size: 14px;
+            color: var(--n-text-color-1);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          
+          .n-upload-file-info__size {
+            font-size: 13px;
+            color: var(--n-text-color-3);
+          }
+        }
+        
+        .n-upload-file-info__action {
+          .n-button {
+            padding: 4px;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            
+            &:hover {
+              color: var(--n-error-color);
+            }
+            
+            .n-icon {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 深色模式适配 */
+:deep([data-theme='dark']) {
+  .custom-upload {
+    .n-upload-file {
+      background: rgba(255, 255, 255, 0.04);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+    }
+  }
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .custom-upload {
+    :deep(.n-upload-file-list) {
+      grid-template-columns: 1fr;
+      
+      .n-upload-file {
+        .n-upload-file-info__name {
+          max-width: 150px;
+        }
+      }
     }
   }
 }
